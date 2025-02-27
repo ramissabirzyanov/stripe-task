@@ -1,12 +1,14 @@
-import stripe
+import logging
 from typing import Any
+
+import stripe
 from django import views
 from django.views.generic import DetailView, TemplateView
 from django.conf import settings
 from django.http import JsonResponse, HttpRequest
 from django.shortcuts import get_object_or_404
+
 from payment_app.item.models import Item
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +32,7 @@ class BuyItemView(views.View):
         """
         item_id = self.kwargs.get('id')
         item = get_object_or_404(Item, id=item_id)
-        quantity = self.request.GET.get('quantity', 1)
+        quantity = int(self.request.GET.get('quantity', 1))
         try:
             stripe_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -58,8 +60,8 @@ class BuyItemView(views.View):
                 status=400
             )
 
-        except Exception as e:
-            logger.exception(f"Unexpected error: {str(e)}")
+        except Exception:
+            logger.exception("Unexpected error")
             return JsonResponse(
                 {'error': 'Internal server error'},
                 status=500
@@ -75,9 +77,7 @@ class ItemDetailView(DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Добавляет публичный ключ Stripe в контекст шаблона.
-
-        Возвращает словарь вида:
-        {str: Any}
+        Возвращает словарь.
         """
         context = super().get_context_data(**kwargs)
         context["STRIPE_PUBLIC_KEY"] = settings.STRIPE_PUBLIC_KEY
