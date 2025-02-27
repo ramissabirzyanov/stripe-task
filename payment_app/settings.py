@@ -131,6 +131,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+"""
+Настройки API-ключей Stripe.
+
+Значения секретного и публичного ключей загружаются из переменных окружения
+для обеспечения безопасности и удобства конфигурации.
+"""
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 
