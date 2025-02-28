@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Order
+from payment_app.order.models import Order
 
 
 @admin.register(Order)

@@ -8,7 +8,6 @@ class Order(models.Model):
     items = models.ManyToManyField(Item, through='OrderItem', related_name='orders')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-
     def calculate_total_price(self):
         """
         Подсчет общей суммы всего заказа.
@@ -34,3 +33,7 @@ class OrderItem(models.Model):
         Подсчет итоговой стоимости конкретной позиции(item).
         """
         return self.item.price * self.quantity
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.order.calculate_total_price()

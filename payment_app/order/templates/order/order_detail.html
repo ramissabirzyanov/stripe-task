@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order #{{ order.id }}</title>
+    <!-- Подключаем Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h2>Your Order #{{ order.id }}</h2>
+    
+        <form method="get" action="{% url 'add' order_pk=order.id %}">
+
+            <button type="submit">Add items</button>
+        </form>
+    
+    <!-- Список товаров -->
+
+    <h3>Items:</h3>
+    <ul>
+        {% for order_item in order.item_in_order.all %}
+        <li>
+            Item: {{ order_item.item.name }} 
+            Price (price per piece): {{ order_item.item.price }}$
+            Quantity: {{ order_item.quantity }}
+        </li>
+        {% endfor %}
+    </ul>
+    
+    <!-- Общая сумма -->
+    <h3>Total: ${{ order.total_price }}</h3>
+    
+    <!-- Кнопка оплаты -->
+    <button onclick="startPayment()">Pay</button>
+
+    <script>
+        var stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+    
+        function startPayment() {
+            fetch("{% url 'buy_order' order_pk=order.id %}")
+            
+            .then(function(response) {
+                return response.json();
+            })
+            
+            .then(function(data) {
+                if (data.stripe_session_id) {
+                    stripe.redirectToCheckout({ sessionId: data.stripe_session_id });
+                } else {
+                    alert('Payment session creation failed.');
+                }
+            })
+            
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Payment error. Please try again.');
+            });
+        }
+    </script>
+    
+</body>
+</html>

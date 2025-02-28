@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Item
+from payment_app.item.models import Item
 
 
 @admin.register(Item)

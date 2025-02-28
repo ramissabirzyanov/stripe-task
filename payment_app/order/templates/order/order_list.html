@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ orders }}</title>
+</head>
+<body>
+    <div>
+        <form method="post" action="{% url 'order_list' %}">
+            {% csrf_token %}
+            <button type="submit">Make an order</button>
+        </form>
+    </div>
+    <div>
+        {% for order in orders %}
+            <ul>
+                <li>
+                    <a href="{% url 'order_detail' order_pk=order.id %}">{{ order.id }}</a>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+</body>

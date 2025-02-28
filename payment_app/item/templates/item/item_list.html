@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ item.name }}</title>
+</head>
+<body>
+    <div>
+        {% for item in items %}
+            <ul>
+                <li>
+                    {% if order_pk %}
+                    <a href="{% url 'add_item_to_order' order_pk=order_pk item_id=item.id %}">{{ item.name }}</a>
+                    {% else %}
+                    <a href="{% url 'item_detail' item.id %}">{{ item.name }}</a>
+                    {% endif %}
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+</body>
